@@ -1,44 +1,779 @@
-<div style="text-align:center; padding:80px 20px; font-family:sans-serif;">
-  <div style="margin:auto; width:60px; height:60px; border:6px solid #ccc; border-top:6px solid #00aaff; border-radius:50%; animation:spin 1s linear infinite;"></div>
-  
-  <h2 style="margin-top:30px; font-weight:normal;">Checking your connection...</h2>
-  <p style="color:#555;">You will be redirected in <span id="countdown">5</span> seconds</p>
-</div>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Toyota Way - Summary</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .active-tab { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        
+        /* Navigation Drawer Styles */
+        .nav-drawer {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 320px;
+            height: 100vh;
+            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+            transition: left 0.3s ease-in-out;
+            z-index: 1000;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .nav-drawer.open {
+            left: 0;
+        }
+        
+        .nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+            z-index: 999;
+        }
+        
+        .nav-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .drawer-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        .drawer-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+        
+        .drawer-toggle.open {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+        
+        .hamburger {
+            width: 24px;
+            height: 18px;
+            position: relative;
+        }
+        
+        .hamburger span {
+            display: block;
+            position: absolute;
+            height: 3px;
+            width: 100%;
+            background: white;
+            border-radius: 2px;
+            opacity: 1;
+            left: 0;
+            transform: rotate(0deg);
+            transition: .25s ease-in-out;
+        }
+        
+        .hamburger span:nth-child(1) { top: 0px; }
+        .hamburger span:nth-child(2) { top: 7px; }
+        .hamburger span:nth-child(3) { top: 14px; }
+        
+        .drawer-toggle.open .hamburger span:nth-child(1) {
+            top: 7px;
+            transform: rotate(135deg);
+        }
+        
+        .drawer-toggle.open .hamburger span:nth-child(2) {
+            opacity: 0;
+            left: -60px;
+        }
+        
+        .drawer-toggle.open .hamburger span:nth-child(3) {
+            top: 7px;
+            transform: rotate(-135deg);
+        }
+        
+        .nav-item {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .nav-item:hover::before {
+            left: 100%;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-drawer {
+                width: 280px;
+                left: -280px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+    <!-- Navigation Drawer Toggle -->
+    <button class="drawer-toggle" onclick="toggleDrawer()">
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </button>
+    
+    <!-- Navigation Overlay -->
+    <div class="nav-overlay" onclick="closeDrawer()"></div>
+    
+    <!-- Navigation Drawer -->
+    <nav class="nav-drawer">
+        <div class="p-6 border-b border-slate-600">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-lg">T</span>
+                </div>
+                <div>
+                    <h2 class="text-white font-semibold text-lg">The Toyota Way</h2>
+                    <p class="text-slate-300 text-sm">Book Summary</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="p-4">
+            <h3 class="text-slate-300 text-sm font-medium uppercase tracking-wider mb-4 px-2">Daftar Isi</h3>
+            <ul class="space-y-2">
+                <li class="nav-item">
+                    <button onclick="showSection('intro'); closeDrawer();" class="nav-btn w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 hover:bg-slate-600 active-tab text-white flex items-center space-x-3">
+                        <span class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-xs font-bold">📖</span>
+                        <span>Kata Pengantar</span>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button onclick="showSection('part1'); closeDrawer();" class="nav-btn w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 hover:bg-slate-600 text-slate-300 flex items-center space-x-3">
+                        <span class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-xs font-bold">1</span>
+                        <div class="text-left">
+                            <div class="font-medium">Part 1</div>
+                            <div class="text-xs text-slate-400">Latar Belakang Toyota</div>
+                        </div>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button onclick="showSection('part2'); closeDrawer();" class="nav-btn w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 hover:bg-slate-600 text-slate-300 flex items-center space-x-3">
+                        <span class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-xs font-bold">2</span>
+                        <div class="text-left">
+                            <div class="font-medium">Part 2</div>
+                            <div class="text-xs text-slate-400">Filosofi Jangka Panjang</div>
+                        </div>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button onclick="showSection('part3'); closeDrawer();" class="nav-btn w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 hover:bg-slate-600 text-slate-300 flex items-center space-x-3">
+                        <span class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center text-xs font-bold">3</span>
+                        <div class="text-left">
+                            <div class="font-medium">Part 3</div>
+                            <div class="text-xs text-slate-400">Proses yang Tepat</div>
+                        </div>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button onclick="showSection('part4'); closeDrawer();" class="nav-btn w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 hover:bg-slate-600 text-slate-300 flex items-center space-x-3">
+                        <span class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center text-xs font-bold">4</span>
+                        <div class="text-left">
+                            <div class="font-medium">Part 4</div>
+                            <div class="text-xs text-slate-400">Mengembangkan Orang & Mitra</div>
+                        </div>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button onclick="showSection('part5'); closeDrawer();" class="nav-btn w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 hover:bg-slate-600 text-slate-300 flex items-center space-x-3">
+                        <span class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center text-xs font-bold">5</span>
+                        <div class="text-left">
+                            <div class="font-medium">Part 5</div>
+                            <div class="text-xs text-slate-400">Pemecahan Masalah Berkesinambungan</div>
+                        </div>
+                    </button>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-600">
+            <div class="text-center">
+                <p class="text-slate-400 text-xs">© 2024 Toyota Way Summary</p>
+                <p class="text-slate-500 text-xs mt-1">Minimalist Design</p>
+            </div>
+        </div>
+    </nav>
 
-<style>
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-</style>
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-slate-200">
+        <div class="max-w-4xl mx-auto px-6 py-8">
+            <div class="text-center">
+                <h1 class="text-4xl font-bold text-slate-800 mb-2">The Toyota Way</h1>
+                <p class="text-lg text-slate-600 font-medium">14 Prinsip Manajemen dari Perusahaan Manufaktur Terbesar di Dunia</p>
+                <div class="w-24 h-1 bg-gradient-to-r from-blue-500 to-blue-600 mx-auto mt-4 rounded-full"></div>
+            </div>
+        </div>
+    </header>
 
-<script type='text/javascript'>
-(function() {
-  var links = [
-    "https://www.wedusing.my.id/2025/08/afrique-francophone-travail-emploi.html", 
-    "https://www.wedusing.my.id/2025/08/exetat-2025-la-revolution-techno-des.html",
-    "https://www.wedusing.my.id/2025/08/red-bull-tandem-coaster-makes-us-debut.html", 
-    "https://www.wedusing.my.id/2025/08/un-tesla-cybertruck-laisse-branche-part.html", 
-    "https://www.wedusing.my.id/2025/08/gabriel-arias-drives-in-4-as-guardians.html", 
-    "https://www.wedusing.my.id/2025/08/cbs-sports-nebraskas-first-2025-loss.html", 
-    "https://www.wedusing.my.id/2025/07/top-10-meme-coins-boil-over-only-one.html", 
-    "https://www.wedusing.my.id/2025/07/trump-champions-groundbreaking-genius.html", 
-    "https://www.wedusing.my.id/2025/07/galaxy-z-fold-7-review-after-six-years.html", 
-    "https://www.wedusing.my.id/2025/07/blockdags-no-vesting-pass-spikes-342m.html", 
-    "https://www.wedusing.my.id/2025/06/why-these-7-tokens-will-top-every-best.html"
-  ];
+    <div class="max-w-4xl mx-auto px-6 py-8">
+        <!-- Content Area -->
+        <main>
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    
+                    <!-- Kata Pengantar -->
+                    <section id="intro" class="content-section active p-8 fade-in">
+                        <div class="mb-6">
+                            <span class="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full mb-4">Kata Pengantar</span>
+                            <h2 class="text-3xl font-bold text-slate-800 mb-4">Selamat Datang di The Toyota Way</h2>
+                        </div>
+                        
+                        <div class="prose prose-lg max-w-none text-slate-700 leading-relaxed space-y-6">
+                            <p class="text-xl text-slate-600 font-medium border-l-4 border-blue-500 pl-6 italic">
+                                "Sukses Toyota bukan hanya tentang mobil yang berkualitas, tetapi tentang cara berpikir dan filosofi yang telah teruji selama puluhan tahun."
+                            </p>
+                            
+                            <p>
+                                Buku "The Toyota Way" mengungkap rahasia di balik kesuksesan Toyota sebagai salah satu perusahaan manufaktur terbesar dan paling efisien di dunia. Lebih dari sekadar sistem produksi, Toyota Way adalah filosofi manajemen yang komprehensif.
+                            </p>
+                            
+                            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100">
+                                <h4 class="font-semibold text-slate-800 mb-3">Yang Akan Anda Pelajari:</h4>
+                                <ul class="space-y-2 text-slate-700">
+                                    <li class="flex items-start">
+                                        <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                        Sejarah dan latar belakang filosofi Toyota
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                        14 prinsip fundamental yang membentuk 4 pilar utama
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                        Studi kasus nyata dan implementasi praktis
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                        Relevansi untuk bisnis modern di berbagai industri
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <p>
+                                Navigasikan melalui menu di sebelah kiri untuk menjelajahi setiap bagian secara mendalam. Setiap part dirancang untuk memberikan pemahaman yang komprehensif dan praktis.
+                            </p>
+                        </div>
+                    </section>
 
-  var index = Math.floor(Math.random() * links.length);
-  var seconds = 6; // waktu countdown dalam detik
-  var countdownEl = document.getElementById("countdown");
+                    <!-- Part 1 -->
+                    <section id="part1" class="content-section p-8">
+                        <div class="mb-6">
+                            <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-700 text-sm font-medium rounded-full mb-4">Part 1</span>
+                            <h2 class="text-3xl font-bold text-slate-800 mb-4">Latar Belakang Toyota</h2>
+                        </div>
+                        
+                        <div class="prose prose-lg max-w-none text-slate-700 leading-relaxed space-y-6">
+                            <h3 class="text-xl font-semibold text-slate-800">Sejarah Singkat Toyota</h3>
+                            <p>
+                                Toyota Motor Corporation didirikan pada tahun 1937 oleh Kiichiro Toyoda, yang awalnya merupakan divisi otomotif dari Toyoda Automatic Loom Works. Perusahaan ini berkembang dari industri tekstil menjadi raksasa otomotif global.
+                            </p>
+                          <h2>Ringkasan Buku The Toyota Way - Part 1</h2>
 
-  var timer = setInterval(function() {
-    seconds--;
-    countdownEl.textContent = seconds;
-    if (seconds <= 0) {
-      clearInterval(timer);
-      window.location.href = links[index];
-    }
-  }, 1000);
-})();
-</script>
+<p>
+Buku <em>The Toyota Way</em> karya Jeffrey K. Liker adalah salah satu karya manajemen paling berpengaruh dalam dua dekade terakhir. Buku ini berfokus pada bagaimana Toyota, sebuah perusahaan otomotif dari Jepang, mampu mengubah dirinya dari pemain regional menjadi salah satu raksasa dunia. Toyota tidak hanya berhasil secara finansial, tetapi juga dikenal sebagai simbol konsistensi, kualitas, dan efisiensi. Keunggulan ini bukan muncul tiba-tiba, melainkan hasil dari filosofi manajemen yang telah berkembang selama puluhan tahun. Liker merangkum prinsip-prinsip tersebut menjadi empat pilar utama dengan total 14 prinsip, yang dikenal sebagai <strong>The Toyota Way</strong>.
+</p>
+
+<h2>Latar Belakang Sejarah Toyota</h2>
+
+<p>
+Untuk memahami <em>The Toyota Way</em>, penting menengok ke sejarah Toyota. Toyota didirikan oleh Kiichiro Toyoda pada 1937 sebagai bagian dari evolusi perusahaan keluarga yang awalnya bergerak di bidang tekstil. Dari awal berdirinya, Toyota sudah menghadapi banyak tantangan: keterbatasan modal, teknologi yang kalah jauh dari Amerika dan Eropa, serta pasar domestik yang belum matang. Dalam situasi seperti ini, Toyota tidak bisa meniru strategi perusahaan Barat secara mentah. Mereka harus mencari jalan yang sesuai dengan konteks Jepang—lebih hemat, lebih adaptif, dan lebih menghargai manusia.
+</p>
+
+<p>
+Konteks budaya Jepang juga ikut membentuk sistem ini. Jepang pasca-Perang Dunia II adalah negara yang kekurangan sumber daya, sehingga efisiensi menjadi keharusan. Dari sinilah lahir konsep <em>lean thinking</em> atau pemikiran ramping, di mana setiap pemborosan harus dihilangkan dan setiap proses harus memberikan nilai nyata. Toyota berhasil memadukan nilai budaya Jepang—seperti kedisiplinan, kerja sama tim, dan penghargaan terhadap kesempurnaan—dengan praktik manajemen modern. Hasilnya adalah sistem produksi Toyota (Toyota Production System, TPS) yang kelak menjadi inspirasi global.
+</p>
+
+<h2>Mengapa The Toyota Way Istimewa?</h2>
+
+<p>
+Banyak perusahaan berusaha meniru Toyota, tetapi hanya sedikit yang berhasil. Hal ini karena <em>The Toyota Way</em> bukan sekadar sekumpulan teknik produksi, melainkan sebuah filosofi menyeluruh. Liker menekankan bahwa ada dua elemen penting yang membuat Toyota istimewa:
+</p>
+
+<ul>
+  <li>
+    <strong>Konsistensi Jangka Panjang:</strong> Toyota selalu memandang bisnis sebagai maraton, bukan sprint. Keputusan yang diambil tidak hanya untuk keuntungan setahun ke depan, tetapi untuk membangun fondasi puluhan tahun.
+  </li>
+  <li>
+    <strong>Keseimbangan Antara Proses dan Manusia:</strong> Toyota menyadari bahwa sistem hanya bisa berjalan jika orang yang mengoperasikannya berkomitmen. Oleh karena itu, mereka menaruh perhatian besar pada pelatihan, kepemimpinan, dan kerja tim.
+  </li>
+</ul>
+
+<p>
+Toyota juga tidak mudah terbuai oleh teknologi. Prinsip mereka sederhana: gunakan teknologi hanya jika terbukti mendukung manusia dan proses. Inilah sebabnya mengapa Toyota sering tampak lambat mengadopsi tren baru, tetapi justru lebih konsisten dan stabil.
+</p>
+
+<h2>Empat Pilar The Toyota Way</h2>
+
+<p>
+Jeffrey Liker merangkum filosofi Toyota ke dalam empat pilar utama:
+</p>
+
+<ol>
+  <li><strong>Filosofi Jangka Panjang</strong> – Semua keputusan bisnis didasarkan pada tujuan jangka panjang, bahkan jika itu berarti mengorbankan keuntungan jangka pendek.</li>
+  <li><strong>Proses yang Tepat Menghasilkan Hasil yang Tepat</strong> – Fokus pada menciptakan aliran kerja yang efisien, menghindari pemborosan, dan membangun standar kerja yang jelas.</li>
+  <li><strong>Mengembangkan Orang dan Mitra</strong> – Pemimpin, karyawan, dan pemasok dipandang sebagai aset penting yang harus dikembangkan dan dihargai.</li>
+  <li><strong>Pemecahan Masalah Berkesinambungan</strong> – Organisasi harus selalu belajar dari kesalahan dan berkomitmen pada perbaikan berkelanjutan.</li>
+</ol>
+
+<p>
+Keempat pilar ini bukan berdiri sendiri, melainkan saling terkait. Filosofi jangka panjang menjadi fondasi, proses yang tepat menjadi mesin penggerak, pengembangan orang sebagai bahan bakar, dan pemecahan masalah sebagai sistem kontrol agar organisasi tidak berhenti belajar.
+</p>
+
+<h2>Awal Pilar Pertama: Filosofi Jangka Panjang</h2>
+
+<p>
+Prinsip pertama dalam <em>The Toyota Way</em> adalah menjadikan keputusan bisnis berdasarkan filosofi jangka panjang. Toyota memandang perusahaan bukan hanya sebagai alat pencetak keuntungan, melainkan juga sebagai entitas yang bertanggung jawab sosial. Visi jangka panjang Toyota adalah menciptakan nilai bagi pelanggan, karyawan, pemegang saham, dan masyarakat luas. 
+</p>
+
+<p>
+Dalam praktiknya, filosofi ini membuat Toyota berani mengambil langkah yang tidak populer. Misalnya, mereka rela mengorbankan keuntungan sesaat demi melatih karyawan atau memperkuat pemasok. Toyota juga cenderung menghindari ekspansi cepat jika belum ada kesiapan sistem. Bagi mereka, pertumbuhan yang stabil lebih berharga daripada lonjakan sementara yang berisiko runtuh.
+</p>
+
+<p>
+Contoh nyata filosofi ini terlihat pada komitmen Toyota terhadap lingkungan. Jauh sebelum isu global warming menjadi tren, Toyota sudah berinvestasi dalam pengembangan mobil hibrida seperti Prius. Investasi ini awalnya diragukan karena mahal dan tidak menguntungkan dalam jangka pendek, tetapi dalam jangka panjang membuktikan Toyota sebagai pionir mobil ramah lingkungan.
+</p>
+
+<p>
+Prinsip ini juga memengaruhi gaya kepemimpinan di Toyota. Seorang pemimpin tidak hanya dinilai dari profitabilitas tahunan, tetapi dari kemampuannya menjaga budaya perusahaan, melatih generasi berikutnya, dan membangun fondasi untuk masa depan. Hal ini membuat Toyota relatif lebih stabil dalam menghadapi pergantian manajemen dibandingkan perusahaan lain.
+</p>
+
+<h2>Penutup Part 1</h2>
+
+<p>
+Bagian pertama ini memberikan gambaran mengapa <em>The Toyota Way</em> dianggap sebagai salah satu sistem manajemen terbaik di dunia. Sejarah panjang, tantangan besar, dan budaya disiplin telah melahirkan filosofi yang konsisten. Empat pilar yang dirumuskan Liker menjadi kerangka untuk memahami Toyota: mulai dari filosofi jangka panjang, proses yang tepat, pengembangan manusia, hingga pembelajaran berkesinambungan. Pada bagian berikutnya, kita akan membahas lebih detail mengenai Pilar 1 – Filosofi Jangka Panjang, dengan uraian mendalam mengenai bagaimana prinsip ini diterapkan dan dampaknya bagi seluruh organisasi Toyota.
+</p>
+
+                            
+                            <div class="bg-slate-50 p-6 rounded-xl">
+                                <h4 class="font-semibold text-slate-800 mb-3">Timeline Penting:</h4>
+                                <ul class="space-y-2">
+                                    <li><strong>1937:</strong> Pendirian Toyota Motor Corporation</li>
+                                    <li><strong>1950-an:</strong> Pengembangan Toyota Production System (TPS)</li>
+                                    <li><strong>1960-an:</strong> Ekspansi ke pasar internasional</li>
+                                    <li><strong>1990-an:</strong> Formalisasi "The Toyota Way"</li>
+                                </ul>
+                            </div>
+                            
+                            <h3 class="text-xl font-semibold text-slate-800">Mengapa The Toyota Way Lahir?</h3>
+                            <p>
+                                The Toyota Way lahir dari kebutuhan untuk menciptakan sistem yang dapat menghasilkan kualitas tinggi dengan efisiensi maksimal. Filosofi ini dikembangkan melalui pembelajaran dari krisis, inovasi berkelanjutan, dan komitmen terhadap perbaikan terus-menerus (kaizen).
+                            </p>
+                            
+                            <div class="bg-gradient-to-r from-amber-50 to-orange-50 p-6 rounded-xl border border-amber-200">
+                                <h4 class="font-semibold text-slate-800 mb-3">4 Pilar Utama The Toyota Way:</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                                        <h5 class="font-medium text-blue-700">Pilar 1</h5>
+                                        <p class="text-sm text-slate-600">Filosofi Jangka Panjang</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                                        <h5 class="font-medium text-green-700">Pilar 2</h5>
+                                        <p class="text-sm text-slate-600">Proses yang Tepat</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                                        <h5 class="font-medium text-purple-700">Pilar 3</h5>
+                                        <p class="text-sm text-slate-600">Mengembangkan Orang & Mitra</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                                        <h5 class="font-medium text-red-700">Pilar 4</h5>
+                                        <p class="text-sm text-slate-600">Pemecahan Masalah Berkesinambungan</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Part 2 -->
+                    <section id="part2" class="content-section p-8">
+                        <div class="mb-6">
+                            <span class="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full mb-4">Part 2</span>
+                            <h2 class="text-3xl font-bold text-slate-800 mb-4">Pilar 1: Filosofi Jangka Panjang</h2>
+                        </div>
+                        
+                        <div class="prose prose-lg max-w-none text-slate-700 leading-relaxed space-y-6">
+                            <div class="bg-blue-50 p-6 rounded-xl border border-blue-200">
+                                <h3 class="text-xl font-semibold text-blue-800 mb-3">Prinsip 1: Filosofi Jangka Panjang</h3>
+                                <p class="text-blue-700 italic">
+                                    "Basislah keputusan manajemen Anda pada filosofi jangka panjang, bahkan dengan mengorbankan tujuan keuangan jangka pendek."
+                                </p>
+                            </div>
+                            
+                            <h4 class="text-lg font-semibold text-slate-800">Detail Prinsip:</h4>
+                            <p>
+                                Toyota percaya bahwa kesuksesan sejati datang dari komitmen jangka panjang terhadap nilai-nilai inti, bukan hanya pencapaian target keuangan kuartalan. Filosofi ini mencakup:
+                            </p>
+                            
+                            <ul class="space-y-3">
+                                <li class="flex items-start">
+                                    <span class="w-3 h-3 bg-blue-500 rounded-full mt-1.5 mr-3 flex-shrink-0"></span>
+                                    <div>
+                                        <strong>Menciptakan nilai untuk pelanggan:</strong> Mengutamakan kepuasan dan kebutuhan pelanggan di atas keuntungan jangka pendek
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="w-3 h-3 bg-blue-500 rounded-full mt-1.5 mr-3 flex-shrink-0"></span>
+                                    <div>
+                                        <strong>Tanggung jawab sosial:</strong> Berkontribusi positif kepada masyarakat dan lingkungan
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="w-3 h-3 bg-blue-500 rounded-full mt-1.5 mr-3 flex-shrink-0"></span>
+                                    <div>
+                                        <strong>Pertumbuhan berkelanjutan:</strong> Membangun fondasi yang kuat untuk generasi mendatang
+                                    </div>
+                                </li>
+                            </ul>
+                            
+                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200">
+                                <h4 class="font-semibold text-green-800 mb-3">📈 Contoh Nyata: Krisis Finansial 2008</h4>
+                                <p class="text-green-700 mb-3">
+                                    Ketika krisis finansial global melanda pada 2008, banyak perusahaan otomotif melakukan PHK massal. Toyota memilih pendekatan berbeda:
+                                </p>
+                                <ul class="space-y-2 text-green-700">
+                                    <li>• Mempertahankan karyawan meski mengalami kerugian</li>
+                                    <li>• Menggunakan waktu untuk pelatihan dan pengembangan</li>
+                                    <li>• Fokus pada inovasi dan efisiensi jangka panjang</li>
+                                    <li>• Hasil: Pemulihan lebih cepat dan loyalitas karyawan yang tinggi</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="bg-slate-50 p-6 rounded-xl">
+                                <h4 class="font-semibold text-slate-800 mb-3">🎯 Implementasi Praktis:</h4>
+                                <ol class="space-y-2 text-slate-700">
+                                    <li>1. Tetapkan visi jangka panjang yang jelas (10-50 tahun)</li>
+                                    <li>2. Evaluasi keputusan berdasarkan dampak jangka panjang</li>
+                                    <li>3. Investasi dalam R&D meski tidak menguntungkan segera</li>
+                                    <li>4. Bangun hubungan jangka panjang dengan stakeholder</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Part 3 -->
+                    <section id="part3" class="content-section p-8">
+                        <div class="mb-6">
+                            <span class="inline-block px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full mb-4">Part 3</span>
+                            <h2 class="text-3xl font-bold text-slate-800 mb-4">Pilar 2: Proses yang Tepat</h2>
+                        </div>
+                        
+                        <div class="prose prose-lg max-w-none text-slate-700 leading-relaxed space-y-6">
+                            <p class="text-lg text-slate-600">
+                                Pilar kedua mencakup 7 prinsip (Prinsip 2-8) yang fokus pada penciptaan proses yang menghasilkan hasil yang tepat.
+                            </p>
+                            
+                            <div class="space-y-6">
+                                <div class="bg-green-50 p-6 rounded-xl border border-green-200">
+                                    <h3 class="text-lg font-semibold text-green-800 mb-3">Prinsip 2: Ciptakan Alur Proses Berkelanjutan</h3>
+                                    <p class="text-green-700 mb-3">Buat alur kerja yang mengungkap masalah dan memungkinkan perbaikan terus-menerus.</p>
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <strong>Studi Kasus:</strong> Sistem Just-in-Time (JIT) Toyota mengurangi inventory hingga 90% dan meningkatkan kualitas dengan mendeteksi masalah lebih cepat.
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-blue-50 p-6 rounded-xl border border-blue-200">
+                                    <h3 class="text-lg font-semibold text-blue-800 mb-3">Prinsip 3: Gunakan Sistem "Pull"</h3>
+                                    <p class="text-blue-700 mb-3">Produksi berdasarkan permintaan aktual, bukan prediksi.</p>
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <strong>Studi Kasus:</strong> Sistem Kanban Toyota mengurangi waste hingga 50% dengan memproduksi hanya sesuai kebutuhan pelanggan.
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-purple-50 p-6 rounded-xl border border-purple-200">
+                                    <h3 class="text-lg font-semibold text-purple-800 mb-3">Prinsip 4: Ratakan Beban Kerja</h3>
+                                    <p class="text-purple-700 mb-3">Distribusikan pekerjaan secara merata untuk menghindari overburden.</p>
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <strong>Studi Kasus:</strong> Heijunka (production leveling) meningkatkan efisiensi produksi Toyota hingga 30%.
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-red-50 p-6 rounded-xl border border-red-200">
+                                    <h3 class="text-lg font-semibold text-red-800 mb-3">Prinsip 5: Budaya Menghentikan Produksi</h3>
+                                    <p class="text-red-700 mb-3">Berhenti untuk memperbaiki masalah dan mendapatkan kualitas yang tepat sejak awal.</p>
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <strong>Studi Kasus:</strong> Sistem Andon memungkinkan pekerja menghentikan lini produksi, mengurangi defect rate hingga 99%.
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-yellow-50 p-6 rounded-xl border border-yellow-200">
+                                    <h3 class="text-lg font-semibold text-yellow-800 mb-3">Prinsip 6-8: Standardisasi, Visual Control & Teknologi Teruji</h3>
+                                    <p class="text-yellow-700 mb-3">Gunakan tugas dan proses yang terstandardisasi, kontrol visual, dan teknologi yang mendukung orang dan proses.</p>
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <strong>Studi Kasus:</strong> 5S methodology dan poka-yoke (error-proofing) mengurangi kesalahan operasional hingga 95%.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Part 4 -->
+                    <section id="part4" class="content-section p-8">
+                        <div class="mb-6">
+                            <span class="inline-block px-3 py-1 bg-purple-100 text-purple-700 text-sm font-medium rounded-full mb-4">Part 4</span>
+                            <h2 class="text-3xl font-bold text-slate-800 mb-4">Pilar 3: Mengembangkan Orang & Mitra</h2>
+                        </div>
+                        
+                        <div class="prose prose-lg max-w-none text-slate-700 leading-relaxed space-y-6">
+                            <p class="text-lg text-slate-600">
+                                Pilar ketiga mencakup 3 prinsip (Prinsip 9-11) yang fokus pada pengembangan sumber daya manusia dan kemitraan.
+                            </p>
+                            
+                            <div class="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 rounded-xl border border-purple-200">
+                                <h3 class="text-xl font-semibold text-purple-800 mb-4">Prinsip 9: Kembangkan Pemimpin yang Memahami Pekerjaan</h3>
+                                <p class="text-purple-700 mb-4">
+                                    Kembangkan pemimpin yang benar-benar memahami pekerjaan, menghayati filosofi, dan mengajarkannya kepada orang lain.
+                                </p>
+                                
+                                <div class="bg-white p-4 rounded-lg mb-4">
+                                    <h4 class="font-semibold text-slate-800 mb-2">Karakteristik Pemimpin Toyota:</h4>
+                                    <ul class="space-y-1 text-slate-700">
+                                        <li>• Memulai dari bawah dan memahami detail pekerjaan</li>
+                                        <li>• Mengajar melalui contoh, bukan hanya instruksi</li>
+                                        <li>• Fokus pada pengembangan jangka panjang</li>
+                                        <li>• Menghargai pembelajaran dari kegagalan</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200">
+                                <h3 class="text-xl font-semibold text-green-800 mb-4">Prinsip 10: Kembangkan Orang dan Tim Luar Biasa</h3>
+                                <p class="text-green-700 mb-4">
+                                    Kembangkan orang dan tim luar biasa yang mengikuti filosofi perusahaan Anda.
+                                </p>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h5 class="font-medium text-green-700 mb-2">Pengembangan Individu:</h5>
+                                        <ul class="text-sm text-slate-600 space-y-1">
+                                            <li>• Pelatihan berkelanjutan</li>
+                                            <li>• Rotasi pekerjaan</li>
+                                            <li>• Mentoring intensif</li>
+                                        </ul>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h5 class="font-medium text-green-700 mb-2">Pengembangan Tim:</h5>
+                                        <ul class="text-sm text-slate-600 space-y-1">
+                                            <li>• Quality circles</li>
+                                            <li>• Cross-functional teams</li>
+                                            <li>• Shared responsibility</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-r from-blue-50 to-cyan-50 p-6 rounded-xl border border-blue-200">
+                                <h3 class="text-xl font-semibold text-blue-800 mb-4">Prinsip 11: Hormati Mitra dan Pemasok</h3>
+                                <p class="text-blue-700 mb-4">
+                                    Hormati jaringan mitra dan pemasok dengan menantang mereka dan membantu mereka berkembang.
+                                </p>
+                                
+                                <div class="bg-white p-4 rounded-lg">
+                                    <h4 class="font-semibold text-slate-800 mb-2">Contoh Nyata: Program Supplier Development</h4>
+                                    <p class="text-slate-700 mb-2">
+                                        Toyota membantu supplier meningkatkan kualitas dan efisiensi melalui:
+                                    </p>
+                                    <ul class="space-y-1 text-slate-600">
+                                        <li>• Transfer knowledge dan best practices</li>
+                                        <li>• Joint improvement projects</li>
+                                        <li>• Long-term partnership agreements</li>
+                                        <li>• Hasil: 40% peningkatan kualitas supplier dalam 3 tahun</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Part 5 -->
+                    <section id="part5" class="content-section p-8">
+                        <div class="mb-6">
+                            <span class="inline-block px-3 py-1 bg-red-100 text-red-700 text-sm font-medium rounded-full mb-4">Part 5</span>
+                            <h2 class="text-3xl font-bold text-slate-800 mb-4">Pilar 4: Pemecahan Masalah Berkesinambungan</h2>
+                        </div>
+                        
+                        <div class="prose prose-lg max-w-none text-slate-700 leading-relaxed space-y-6">
+                            <div class="bg-gradient-to-r from-red-50 to-pink-50 p-6 rounded-xl border border-red-200">
+                                <h3 class="text-xl font-semibold text-red-800 mb-4">Prinsip 12-14: Continuous Improvement</h3>
+                                <p class="text-red-700 mb-4">
+                                    Tiga prinsip terakhir fokus pada pembelajaran organisational dan perbaikan berkelanjutan.
+                                </p>
+                                
+                                <div class="space-y-4">
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h4 class="font-semibold text-red-700 mb-2">Prinsip 12: Lihat Sendiri (Genchi Genbutsu)</h4>
+                                        <p class="text-slate-700">Pergi ke sumber untuk memahami situasi sepenuhnya, bukan mengandalkan laporan orang lain.</p>
+                                    </div>
+                                    
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h4 class="font-semibold text-red-700 mb-2">Prinsip 13: Buat Keputusan Perlahan</h4>
+                                        <p class="text-slate-700">Pertimbangkan semua opsi secara menyeluruh, implementasikan keputusan dengan cepat (nemawashi).</p>
+                                    </div>
+                                    
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h4 class="font-semibold text-red-700 mb-2">Prinsip 14: Jadilah Organisasi Pembelajar</h4>
+                                        <p class="text-slate-700">Refleksi tanpa henti dan perbaikan berkelanjutan (hansei dan kaizen).</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-r from-amber-50 to-yellow-50 p-6 rounded-xl border border-amber-200">
+                                <h3 class="text-xl font-semibold text-amber-800 mb-4">🌟 Kesimpulan</h3>
+                                <p class="text-amber-700 mb-4">
+                                    The Toyota Way bukan hanya sistem produksi, tetapi filosofi manajemen holistik yang mengintegrasikan:
+                                </p>
+                                <ul class="space-y-2 text-amber-700">
+                                    <li>• <strong>Visi jangka panjang</strong> yang melampaui profit</li>
+                                    <li>• <strong>Proses yang efisien</strong> dan fokus pada nilai</li>
+                                    <li>• <strong>Pengembangan manusia</strong> sebagai aset utama</li>
+                                    <li>• <strong>Pembelajaran berkelanjutan</strong> dari setiap pengalaman</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="bg-gradient-to-r from-indigo-50 to-blue-50 p-6 rounded-xl border border-indigo-200">
+                                <h3 class="text-xl font-semibold text-indigo-800 mb-4">🚀 Penerapan di Luar Toyota</h3>
+                                <p class="text-indigo-700 mb-4">
+                                    Prinsip-prinsip Toyota Way telah berhasil diterapkan di berbagai industri:
+                                </p>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h5 class="font-medium text-indigo-700 mb-2">Healthcare:</h5>
+                                        <p class="text-sm text-slate-600">Virginia Mason Medical Center mengurangi medical errors 74% dengan lean principles.</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h5 class="font-medium text-indigo-700 mb-2">Software:</h5>
+                                        <p class="text-sm text-slate-600">Agile methodology mengadopsi prinsip continuous improvement dan customer focus.</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h5 class="font-medium text-indigo-700 mb-2">Retail:</h5>
+                                        <p class="text-sm text-slate-600">Amazon menerapkan customer obsession dan operational excellence.</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h5 class="font-medium text-indigo-700 mb-2">Startup:</h5>
+                                        <p class="text-sm text-slate-600">Lean Startup methodology menggunakan build-measure-learn cycle.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-r from-emerald-50 to-green-50 p-6 rounded-xl border border-emerald-200">
+                                <h3 class="text-xl font-semibold text-emerald-800 mb-4">💡 Relevansi untuk Bisnis Modern</h3>
+                                <p class="text-emerald-700 mb-4">
+                                    Di era digital dan persaingan global, prinsip Toyota Way semakin relevan:
+                                </p>
+                                <ul class="space-y-2 text-emerald-700">
+                                    <li>• <strong>Agility:</strong> Kemampuan beradaptasi dengan perubahan cepat</li>
+                                    <li>• <strong>Quality:</strong> Fokus pada excellence di tengah pressure untuk speed</li>
+                                    <li>• <strong>Sustainability:</strong> Thinking jangka panjang dalam era short-term metrics</li>
+                                    <li>• <strong>Human-centric:</strong> Mengutamakan people development di era automation</li>
+                                    <li>• <strong>Continuous Learning:</strong> Essential untuk survival di era disruption</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        function toggleDrawer() {
+            const drawer = document.querySelector('.nav-drawer');
+            const overlay = document.querySelector('.nav-overlay');
+            const toggle = document.querySelector('.drawer-toggle');
+            
+            drawer.classList.toggle('open');
+            overlay.classList.toggle('active');
+            toggle.classList.toggle('open');
+        }
+        
+        function closeDrawer() {
+            const drawer = document.querySelector('.nav-drawer');
+            const overlay = document.querySelector('.nav-overlay');
+            const toggle = document.querySelector('.drawer-toggle');
+            
+            drawer.classList.remove('open');
+            overlay.classList.remove('active');
+            toggle.classList.remove('open');
+        }
+        
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all nav buttons
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(btn => {
+                btn.classList.remove('active-tab', 'text-white');
+                btn.classList.add('text-slate-300');
+            });
+            
+            // Show selected section
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active', 'fade-in');
+            }
+            
+            // Highlight active nav button
+            const activeButton = event.target.closest('.nav-btn');
+            if (activeButton) {
+                activeButton.classList.add('active-tab', 'text-white');
+                activeButton.classList.remove('text-slate-300');
+            }
+            
+            // Scroll to top of content
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Close drawer when clicking outside or pressing Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeDrawer();
+            }
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 1024) {
+                closeDrawer();
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97bb713d578489bc',t:'MTc1NzMwMzAxNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
